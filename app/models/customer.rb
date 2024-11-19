@@ -16,6 +16,8 @@ class Customer < ApplicationRecord
     include_deleted ? with_deleted : without_deleted
   }
 
+  has_many :loan_simulators, dependent: :destroy
+
   def age
     return nil unless birthdate.present?
     ((Date.current - birthdate.to_date) / 365).floor
