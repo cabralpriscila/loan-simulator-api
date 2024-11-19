@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+
+development:
+  <<: *default
+  database: loan_simulator_api_development
+
+test:
+  <<: *default
+  database: loan_simulator_api_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: loan_simulator_api_production
+    username: loan_simulator_api
+    password: <%= ENV["LOAN_SIMULATOR_API_DATABASE_PASSWORD"] %>
