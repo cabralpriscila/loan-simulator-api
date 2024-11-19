@@ -1,4 +1,6 @@
 class Customer < ApplicationRecord
+  acts_as_paranoid
+
   validates :name, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :document_number, presence: true, document_number: true
