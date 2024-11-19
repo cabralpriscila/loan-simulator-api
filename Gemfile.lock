@@ -265,6 +265,8 @@ GEM
       rubocop-minitest
       rubocop-performance
       rubocop-rails
+    rubocop-rspec (3.2.0)
+      rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
     securerandom (0.3.2)
     shoulda-matchers (6.4.0)
@@ -313,7 +315,9 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.0)
   rspec-rails
+  rubocop-rails
   rubocop-rails-omakase
+  rubocop-rspec
   shoulda-matchers
   thruster
   tzinfo-data
