@@ -5,12 +5,12 @@ module Api
 
       def index
         @customers = if params[:include_deleted]
-                      Customer.with_deleted
+                       Customer.with_deleted
         else
-                      Customer.without_deleted
+                       Customer.without_deleted
         end
 
-        render json: @customers
+        render json: { customers: @customers }
       end
 
       def show

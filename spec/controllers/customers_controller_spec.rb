@@ -2,16 +2,25 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CustomersController, type: :controller do
   describe 'GET #index' do
-    let!(:customers) { create_list(:customer, 3) }
+    let!(:active_customers) { create_list(:customer, 10) }
+    let!(:deleted_customer) { create(:customer).tap(&:destroy) }
 
-    it 'returns a successful response' do
-      get :index
-      expect(response).to be_successful
+    context 'without include_deleted param' do
+      it 'returns all active customers' do
+        get :index
+        body = JSON.parse(response.body)
+
+        expect(body['customers'].size).to eq(10)
+      end
     end
 
-    it 'returns all customers' do
-      get :index
-      expect(JSON.parse(response.body).size).to eq(3)
+    context 'with include_deleted param' do
+      it 'returns all customers including deleted ones' do
+        get :index, params: { include_deleted: true }
+        body = JSON.parse(response.body)
+
+        expect(body['customers'].size).to eq(11)
+      end
     end
   end
 
@@ -45,7 +54,7 @@ RSpec.describe Api::V1::CustomersController, type: :controller do
           customer: {
             name: 'John Doe',
             email: 'john@example.com',
-            document_number: DocumentNumberUtils.generate,
+            document_number: '59854923037',
             birthdate: 30.years.ago.to_date,
             income: 5000.0
           }
@@ -165,23 +174,6 @@ RSpec.describe Api::V1::CustomersController, type: :controller do
     it 'returns no content status' do
       delete :destroy, params: { id: customer.id }
       expect(response).to have_http_status(:no_content)
-    end
-  end
-
-  describe 'GET #index' do
-    let!(:active_customers) { create_list(:customer, 2) }
-    let!(:deleted_customer) { create(:customer).tap(&:destroy) }
-
-    it 'returns only active customers' do
-      get :index
-      expect(JSON.parse(response.body).size).to eq(2)
-    end
-
-    context 'with include_deleted param' do
-      it 'returns all customers including deleted ones' do
-        get :index, params: { include_deleted: true }
-        expect(JSON.parse(response.body).size).to eq(3)
-      end
     end
   end
 end
