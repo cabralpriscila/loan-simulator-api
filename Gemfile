@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "aasm"
 gem "bootsnap", require: false
 gem "kamal", require: false
 gem "kaminari"
