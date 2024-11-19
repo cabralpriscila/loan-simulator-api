@@ -12,6 +12,10 @@ class Customer < ApplicationRecord
   validate :birthdate_cannot_be_in_future
   validate :must_be_of_legal_age
 
+  scope :by_deletion_status, ->(include_deleted) {
+    include_deleted ? with_deleted : without_deleted
+  }
+
   def age
     return nil unless birthdate.present?
     ((Date.current - birthdate.to_date) / 365).floor
