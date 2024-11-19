@@ -1,4 +1,4 @@
-class LoanSimulation < ApplicationRecord
+class LoanSimulator < ApplicationRecord
   STATUSES = [ "pending", "calculated", "approved", "rejected" ].freeze
   MINIMUM_AMOUNT = 1_000
   MAXIMUM_AMOUNT = 1_000_000
@@ -20,5 +20,32 @@ class LoanSimulation < ApplicationRecord
 
   validates :status, inclusion: { in: STATUSES }
 
+  validate :validate_amount_range
+
+  before_validation :set_initial_status, on: :create
+
+  scope :pending, -> { where(status: "pending") }
+  scope :calculated, -> { where(status: "calculated") }
+  scope :approved, -> { where(status: "approved") }
+  scope :rejected, -> { where(status: "rejected") }
+
   acts_as_paranoid
+
+  private
+
+  def validate_amount_range
+    return unless requested_amount.present?
+
+    if requested_amount < MINIMUM_AMOUNT
+      errors.add(:requested_amount, "deve ser maior ou igual a R$ #{MINIMUM_AMOUNT.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\\1.')},00")
+    end
+
+    if requested_amount > MAXIMUM_AMOUNT
+      errors.add(:requested_amount, "deve ser menor ou igual a R$ #{MAXIMUM_AMOUNT.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\\1.')},00")
+    end
+  end
+
+  def set_initial_status
+    self.status ||= "pending"
+  end
 end
