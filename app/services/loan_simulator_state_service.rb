@@ -3,16 +3,14 @@ class LoanSimulatorStateService
     @loan_simulator = loan_simulator
   end
 
-  def transition_to(new_state, user: nil)
-    Rails.logger.info("Enqueuing transition to #{new_state} for LoanSimulator ##{@loan_simulator.id}")
-
+  def transition_to(new_state)
     event = state_to_event(new_state)
 
-    if event
-      LoanSimulatorStateWorker.perform_async(@loan_simulator.id, event.to_s) # Converte para string
-      { success: true, message: "Transition to '#{new_state}' enqueued successfully." }
+    if event && @loan_simulator.aasm.may_fire_event?(event)
+      @loan_simulator.send("#{event}!")
+      { success: true, message: "Transition to '#{new_state}' succeeded." }
     else
-      { success: false, error: "Invalid state: #{new_state}" }
+      { success: false, error: "Transition to '#{new_state}' is not allowed from the current state." }
     end
   end
 
