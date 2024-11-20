@@ -4,6 +4,10 @@ RSpec.describe LoanSimulator, type: :model do
   let(:customer) { create(:customer) }
   let(:simulator) { build(:loan_simulator, customer: customer, requested_amount: 10_000, term_in_months: 12) }
 
+  before(:each) do
+    LoanSimulator.delete_all
+  end
+  
   describe 'associations' do
     it { should belong_to(:customer) }
   end
