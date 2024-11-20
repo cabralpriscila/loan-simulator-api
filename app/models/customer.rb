@@ -20,7 +20,7 @@ class Customer < ApplicationRecord
 
   def age
     return nil unless birthdate.present?
-    ((Date.current - birthdate.to_date) / 365).floor
+    ((Time.zone.now - birthdate.to_time) / 1.year.seconds).floor
   end
 
   def eligible_for_loan?
