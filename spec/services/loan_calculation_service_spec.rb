@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe LoanCalculationService do
   let(:customer) { create(:customer, birthdate: 30.years.ago, income: 5000) }
   let(:loan_simulator) {
- build(:loan_simulator, customer: customer, requested_amount: 50000, term_in_months: 36) }
+    build(:loan_simulator, customer: customer, requested_amount: 50_000, term_in_months: 36)
+  }
 
   describe '#call' do
     context 'when customer is eligible' do
