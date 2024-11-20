@@ -28,6 +28,7 @@ API para simulação de empréstimos.
 - PostgreSQL
 - Docker
 - Swagger/OpenAPI
+- Sidekiq
 
 ## Instalação
 ```bash
@@ -180,5 +181,18 @@ docker-compose exec web rspec
 docker-compose exec web rails rswag:specs:swaggerize
 ```
 
+## Mensageria com Sidekiq
+### Processamento Assíncrono
+O projeto utiliza o Sidekiq para processar transições de status dos simuladores de empréstimos em segundo plano.
+
+#### Setup do Sidekiq
+
+```bash
+# Inicializar o worker do Sidekiq
+docker-compose up worker
+
+# Acessar o painel do Sidekiq
+http://localhost:3000/sidekiq
+```
 ## Licença
 Este projeto está sob a licença [MIT](LICENSE.md) 
