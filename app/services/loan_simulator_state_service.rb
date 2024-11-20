@@ -4,24 +4,27 @@ class LoanSimulatorStateService
   end
 
   def transition_to(new_state, user: nil)
-    Rails.logger.info("Attempting transition to #{new_state} for LoanSimulator ##{@loan_simulator.id}")
+    Rails.logger.info("Enqueuing transition to #{new_state} for LoanSimulator ##{@loan_simulator.id}")
 
-    event = new_state.to_sym
+    event = state_to_event(new_state)
 
-    if @loan_simulator.aasm.may_fire_event?(event)
-      @loan_simulator.send("#{event}!")
-      handle_side_effects(new_state, user)
-      { success: true, message: "Loan Simulator transitioned to '#{new_state}' successfully." }
+    if event
+      LoanSimulatorStateWorker.perform_async(@loan_simulator.id, event.to_s) # Converte para string
+      { success: true, message: "Transition to '#{new_state}' enqueued successfully." }
     else
-      Rails.logger.error("Transition to #{new_state} failed for LoanSimulator ##{@loan_simulator.id}")
-      { success: false, error: "Transition to '#{new_state}' is not allowed from the current state." }
+      { success: false, error: "Invalid state: #{new_state}" }
     end
-  rescue AASM::InvalidTransition => e
-    Rails.logger.error("Invalid transition: #{e.message}")
-    { success: false, error: "Invalid transition: #{e.message}" }
   end
 
   private
+
+  def state_to_event(state)
+    {
+      "calculated" => :calculate,
+      "approved" => :approve,
+      "rejected" => :reject
+    }[state]
+  end
 
   def handle_side_effects(new_state, user)
     case new_state

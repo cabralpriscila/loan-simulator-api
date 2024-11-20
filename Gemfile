@@ -11,6 +11,8 @@ gem "rack-cors"
 gem "rails", "~> 8.0.0"
 gem "thruster", require: false
 gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "sidekiq"
+gem "redis"
 
 group :development, :test do
   gem "brakeman", require: false
