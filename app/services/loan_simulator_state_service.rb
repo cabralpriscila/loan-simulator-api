@@ -5,9 +5,9 @@ class LoanSimulatorStateService
 
   def transition_to(new_state, user: nil)
     Rails.logger.info("Attempting transition to #{new_state} for LoanSimulator ##{@loan_simulator.id}")
-  
+
     event = new_state.to_sym
-  
+
     if @loan_simulator.aasm.may_fire_event?(event)
       @loan_simulator.send("#{event}!")
       handle_side_effects(new_state, user)
@@ -19,7 +19,7 @@ class LoanSimulatorStateService
   rescue AASM::InvalidTransition => e
     Rails.logger.error("Invalid transition: #{e.message}")
     { success: false, error: "Invalid transition: #{e.message}" }
-  end  
+  end
 
   private
 

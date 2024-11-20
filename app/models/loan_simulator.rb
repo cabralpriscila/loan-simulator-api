@@ -6,19 +6,19 @@ class LoanSimulator < ApplicationRecord
     state :calculated
     state :approved
     state :rejected
-  
+
     event :calculate do
       transitions from: :pending, to: :calculated
     end
-  
+
     event :approve do
       transitions from: :calculated, to: :approved
     end
-  
+
     event :reject do
       transitions from: :calculated, to: :rejected
     end
-  end  
+  end
 
   MINIMUM_AMOUNT = 1_000.00
   MAXIMUM_AMOUNT = 1_000_000.00

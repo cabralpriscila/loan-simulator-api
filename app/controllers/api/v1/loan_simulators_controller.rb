@@ -49,7 +49,7 @@ module Api
       def update_status
         loan_simulator = LoanSimulator.find(params[:id])
         result = LoanSimulatorStateService.new(loan_simulator).transition_to(params[:status])
-      
+
         if result[:success]
           render json: { message: result[:message] }, status: :ok
         else
@@ -57,7 +57,7 @@ module Api
         end
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Loan simulator not found" }, status: :not_found
-      end      
+      end
 
       private
 
