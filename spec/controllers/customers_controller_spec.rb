@@ -2,30 +2,44 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CustomersController, type: :controller do
   describe 'GET #index' do
-    let!(:active_customers) { create_list(:customer, 10) }
-    let!(:deleted_customer) { create(:customer).tap(&:destroy) }
+    before(:each) do
+      ActiveRecord::Base.connection.execute("TRUNCATE TABLE customers RESTART IDENTITY CASCADE")
+      ActiveRecord::Base.connection.execute("TRUNCATE TABLE loan_simulators RESTART IDENTITY CASCADE")
+    end
 
-    context 'without include_deleted param' do
-      it 'returns all active customers' do
-        get :index
-        body = JSON.parse(response.body)
-
-        expect(body['customers'].size).to eq(10)
+    context 'when checking if the database is clean' do
+      it 'makes sure the database is clean' do
+        expect(Customer.count).to eq(0)
+        expect(Customer.with_deleted.count).to eq(0)
       end
     end
 
     context 'with include_deleted param' do
+      let!(:active_customers) { create_list(:customer, 10) }
+      let!(:deleted_customer) { create(:customer).tap(&:destroy) }
+
       it 'returns all customers including deleted ones' do
+        expect(Customer.with_deleted.count).to eq(11)
         get :index, params: { include_deleted: true }
         body = JSON.parse(response.body)
-
         expect(body['customers'].size).to eq(11)
+      end
+    end
+
+    context 'without include_deleted param' do
+      let!(:active_customers) { create_list(:customer, 10) }
+
+      it 'returns only active customers' do
+        get :index
+        body = JSON.parse(response.body)
+        expect(body['customers'].size).to eq(10)
       end
     end
   end
 
+
   describe 'GET #show' do
-    let(:customer) { create(:customer) }
+    let!(:customer) { create(:customer) }
 
     context 'when customer exists' do
       it 'returns a successful response' do
@@ -46,6 +60,7 @@ RSpec.describe Api::V1::CustomersController, type: :controller do
       end
     end
   end
+
 
   describe 'POST #create' do
     context 'with valid params' do
