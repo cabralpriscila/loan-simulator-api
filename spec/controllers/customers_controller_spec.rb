@@ -67,8 +67,8 @@ RSpec.describe Api::V1::CustomersController, type: :controller do
       let(:valid_params) do
         {
           customer: {
-            name: 'John Doe',
-            email: 'john@example.com',
+            name: 'dobby Elfo',
+            email: 'dobby@hogwarts.com',
             document_number: '59854923037',
             birthdate: 30.years.ago.to_date,
             income: 5000.0
@@ -124,7 +124,7 @@ RSpec.describe Api::V1::CustomersController, type: :controller do
     let(:customer) { create(:customer) }
 
     context 'with valid params' do
-      let(:new_name) { 'Jane Doe' }
+      let(:new_name) { 'Hermione Elfo' }
       let(:valid_params) do
         {
           id: customer.id,
