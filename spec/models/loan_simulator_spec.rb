@@ -7,7 +7,7 @@ RSpec.describe LoanSimulator, type: :model do
   before(:each) do
     LoanSimulator.delete_all
   end
-  
+
   describe 'associations' do
     it { should belong_to(:customer) }
   end
