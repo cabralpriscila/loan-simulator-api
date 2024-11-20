@@ -1,7 +1,7 @@
 module Api
   module V1
     class LoanSimulatorsController < ApplicationController
-      before_action :set_loan_simulator, only: [ :show, :update, :destroy ]
+      before_action :set_loan_simulator, only: [ :show, :update, :destroy, :update_status ]
 
       def index
         @loan_simulators = LoanSimulator.page(params[:page]).per(params[:per_page] || 10)
@@ -45,6 +45,19 @@ module Api
         @loan_simulator.destroy
         head :no_content
       end
+
+      def update_status
+        loan_simulator = LoanSimulator.find(params[:id])
+        result = LoanSimulatorStateService.new(loan_simulator).transition_to(params[:status])
+      
+        if result[:success]
+          render json: { message: result[:message] }, status: :ok
+        else
+          render json: { error: result[:error] }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Loan simulator not found" }, status: :not_found
+      end      
 
       private
 
