@@ -133,11 +133,9 @@ RSpec.describe Api::V1::LoanSimulatorsController, type: :controller do
       let!(:loan_simulator) { create(:loan_simulator, customer: customer, status: 'pending') }
 
       it 'updates the status of the loan simulator' do
-        Rails.logger.info("LoanSimulator status before: #{loan_simulator.status}")
         patch :update_status, params: { id: loan_simulator.id, status: 'calculated' }
         loan_simulator.reload
 
-        Rails.logger.info("LoanSimulator status after: #{loan_simulator.status}")
         expect(response).to have_http_status(:ok)
         expect(loan_simulator.status).to eq('calculated')
       end
