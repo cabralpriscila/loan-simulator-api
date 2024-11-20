@@ -22,4 +22,7 @@ group :development, :test do
   gem "rubocop-rails", require: false
   gem "rubocop-rspec", require: false
   gem "shoulda-matchers"
+  gem "rswag-ui"
+  gem "rswag-api"
+  gem "rswag-specs"
 end

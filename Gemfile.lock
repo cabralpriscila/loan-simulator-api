@@ -74,6 +74,8 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.2)
     base64 (0.2.0)
     bcrypt_pbkdf (1.1.1)
@@ -114,6 +116,8 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.8.2)
+    json-schema (5.1.0)
+      addressable (~> 2.8)
     kamal (2.3.0)
       activesupport (>= 7.0)
       base64 (~> 0.2)
@@ -188,6 +192,7 @@ GEM
     pg (1.5.9)
     psych (5.2.0)
       stringio
+    public_suffix (6.0.1)
     puma (6.4.3)
       nio4r (~> 2.0)
     racc (1.8.1)
@@ -253,6 +258,17 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.1)
+    rswag-api (2.16.0)
+      activesupport (>= 5.2, < 8.1)
+      railties (>= 5.2, < 8.1)
+    rswag-specs (2.16.0)
+      activesupport (>= 5.2, < 8.1)
+      json-schema (>= 2.2, < 6.0)
+      railties (>= 5.2, < 8.1)
+      rspec-core (>= 2.14)
+    rswag-ui (2.16.0)
+      actionpack (>= 5.2, < 8.1)
+      railties (>= 5.2, < 8.1)
     rubocop (1.68.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -334,6 +350,9 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.0)
   rspec-rails
+  rswag-api
+  rswag-specs
+  rswag-ui
   rubocop-rails
   rubocop-rails-omakase
   rubocop-rspec
