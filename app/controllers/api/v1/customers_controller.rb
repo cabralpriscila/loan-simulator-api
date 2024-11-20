@@ -23,7 +23,7 @@ module Api
         if @customer.save
           render json: @customer, status: :created
         else
-          render json: { errors: @customer.errors }, status: :unprocessable_entity
+          render json: { errors: @customer.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
