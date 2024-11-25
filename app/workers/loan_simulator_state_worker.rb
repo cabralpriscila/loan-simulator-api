@@ -1,24 +1,36 @@
 class LoanSimulatorStateWorker
   include Sidekiq::Worker
-  sidekiq_options queue: "default"
 
-  def perform(loan_simulator_id, event)
-    loan_simulator = LoanSimulator.find(loan_simulator_id)
+  def perform(loan_simulator_id, action)
+    loan_simulator = LoanSimulator.find_by(id: loan_simulator_id)
 
-    Rails.logger.info "Current state: #{loan_simulator.aasm.current_state}, Event: #{event}"
-
-    if loan_simulator.aasm.current_state.to_s == event
-      Rails.logger.info "LoanSimulator ##{loan_simulator.id} is already in state '#{event}'"
+    unless loan_simulator
+      Rails.logger.error "LoanSimulator ##{loan_simulator_id} not found."
       return
     end
 
-    if loan_simulator.aasm.may_fire_event?(event.to_sym)
-      loan_simulator.send("#{event}!")
-      Rails.logger.info "LoanSimulator ##{loan_simulator.id} transitioned to #{loan_simulator.status}"
+    case action
+    when "calculate"
+      calculate_loan(loan_simulator)
+    when "approve"
+      loan_simulator.approve!
+    when "reject"
+      loan_simulator.reject!
     else
-      Rails.logger.error "Failed to transition LoanSimulator ##{loan_simulator.id} with event #{event}"
+      Rails.logger.warn "Unknown action '#{action}' for LoanSimulator ##{loan_simulator_id}."
     end
-  rescue ActiveRecord::RecordNotFound
-    Rails.logger.error "LoanSimulator ##{loan_simulator_id} not found"
+  rescue => e
+    Rails.logger.error "Error in LoanSimulatorStateWorker for LoanSimulator ##{loan_simulator_id}: #{e.message}"
+  end
+
+  private
+
+  def calculate_loan(loan_simulator)
+    result = LoanCalculationService.call(loan_simulator)
+    if result.success?
+      loan_simulator.calculate! if loan_simulator.pending?
+    else
+      Rails.logger.error "Failed to calculate loan for LoanSimulator ##{loan_simulator.id}: #{result.error}"
+    end
   end
 end
