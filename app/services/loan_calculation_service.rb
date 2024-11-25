@@ -10,10 +10,10 @@ class LoanCalculationService
   def calculate
     return ServiceResult.failure("Cliente não elegível") unless eligible?
 
-    @loan_simulator.interest_rate = calculate_interest_rate
-    @loan_simulator.monthly_payment = calculate_monthly_payment
-    @loan_simulator.total_payment = calculate_total_payment
-    @loan_simulator.total_interest = @loan_simulator.total_payment - @loan_simulator.requested_amount
+    @loan_simulator.interest_rate = calculate_interest_rate.round(2)
+    @loan_simulator.monthly_payment = calculate_monthly_payment.round(2)
+    @loan_simulator.total_payment = calculate_total_payment.round(2)
+    @loan_simulator.total_interest = (@loan_simulator.total_payment - @loan_simulator.requested_amount).round(2)
     @loan_simulator.status = "calculated"
 
     if @loan_simulator.save
@@ -39,7 +39,7 @@ class LoanCalculationService
   end
 
   def calculate_monthly_payment
-    r = @loan_simulator.interest_rate / 100 / 12
+    r = @loan_simulator.interest_rate / 100 / 12.0
     n = @loan_simulator.term_in_months
     p = @loan_simulator.requested_amount
 

@@ -18,12 +18,12 @@ module Api
       end
 
       def create
-        @customer = Customer.new(customer_params)
+        customer = Customer.new(customer_params)
 
-        if @customer.save
-          render json: @customer, status: :created
+        if customer.save
+          render json: customer, status: :created
         else
-          render json: { errors: @customer.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: customer.errors.messages }, status: :unprocessable_entity
         end
       end
 
